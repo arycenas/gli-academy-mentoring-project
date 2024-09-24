@@ -32,7 +32,7 @@ This service is responsible for:
 #### Endpoints
 - `POST /auth/register` - Register a new user.
 - `POST /auth/login` - Login and receive JWT token.
-- `POST /auth/login` - Refresh JWT token if token expired.
+- `POST /auth/refreshToken` - Refresh JWT token if token expired.
 - `POST /auth/validate` - Verify the validity of a JWT token (used by the `Asteroid Data Service`).
 
 ### Asteroid Data Service
