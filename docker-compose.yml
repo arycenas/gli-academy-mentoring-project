@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_net
+
+  usermanage-app:
+    build: ./usermanage
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - db
+    networks:
+      - app_net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:$POSTGRESDB_DOCKER_PORT/$DB_NAME
+      - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+      - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  postgresdata-app:
+    build: ./postgresdata
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+      - db
+      - usermanage-app
+    networks:
+      - app_net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:$POSTGRESDB_DOCKER_PORT/$DB_NAME
+      - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+      - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: postgres
+    container_name: db_postgres
+    restart: unless-stopped
+    environment:
+      -  POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge

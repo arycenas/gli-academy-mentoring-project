@@ -1,0 +1,6 @@
+[submodule "usermanage"]
+	path = usermanage
+	url = https://github.com/arycenas/usermanage
+[submodule "postgresdata"]
+	path = postgresdata
+	url = https://github.com/arycenas/postgresdata
